@@ -1,0 +1,23 @@
+{
+    "modules": [
+      {
+        "id": 1,
+        "title": "Module 1 — HTML",
+        "description": "...",
+        "orderIndex": 1,
+        "exercises": [
+          {
+            "id": 1,
+            "moduleId": 1,
+            "title": "...",
+            "instructionsHtml": "...",
+            "kind": "puzzle",
+            "codeParts": ["..."],
+            "orderedCode": "...",
+            "orderIndex": 1
+          }
+        ]
+      }
+    ]
+  }
+  
