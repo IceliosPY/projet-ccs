@@ -61,4 +61,27 @@ Une **barre de progression dynamique** affiche l’avancement global et par modu
 ---
 
 ## 📁 Structure du projet
+src/
+├── api/
+│ └── modules.ts
+├── components/
+├── pages/
+│ └── ModulesPage.tsx
+├── progress/
+├── styles/
+public/
+└── data/
+└── modules.json
+scripts/
+└── build-modules-json.mjs
 
+
+---
+
+## ⚙️ Installation (développement local)
+
+```bash
+git clone https://github.com/IceliosPY/projet-ccs.git
+cd projet-ccs
+npm install
+npm run dev
