@@ -1,9 +1,13 @@
 # CCS — Plateforme d’apprentissage du code
 
 Version en ligne : https://iceliospy.github.io/projet-ccs/
+
+
 Auteur.es : 
 Stacy : https://github.com/Stacy-Laura
 IceliosPY : https://github.com/IceliosPY
+
+
 
 ## Présentation
 CCS est une application web pour apprendre le code de façon simple, progressive et ludique.
