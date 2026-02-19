@@ -1,73 +1,163 @@
-# React + TypeScript + Vite
+🚀 CCS – Plateforme d’apprentissage du code
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CCS est une plateforme pédagogique interactive permettant d’apprendre les bases du développement web (HTML, CSS, JavaScript) à travers des modules progressifs et des exercices ludiques sous forme de puzzles.
 
-Currently, two official plugins are available:
+🌐 Version en ligne :
+👉 https://iceliospy.github.io/projet-ccs/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🎯 Objectif du projet
 
-## React Compiler
+Créer une expérience d’apprentissage :
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🧩 Interactive (recomposition de code façon puzzle)
 
-## Expanding the ESLint configuration
+📚 Progressive (déblocage d’exercices)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+🎨 Thématisée (palette de couleurs dynamique)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+🧠 Compréhensible même pour un enfant
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+🌍 Déployable statiquement (GitHub Pages)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🏗️ Architecture
+Frontend
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+⚛️ React
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+⚡ Vite
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🧠 TypeScript
+
+Données
+
+Base MySQL locale (XAMPP en développement)
+
+Export JSON automatique pour production
+
+Génération d’un modules.json statique pour GitHub Pages
+
+Déploiement
+
+GitHub Pages
+
+Script gh-pages
+
+📦 Installation (développement local)
+git clone https://github.com/IceliosPY/projet-ccs.git
+cd projet-ccs
+npm install
+npm run dev
+
+🛠️ Build pour production
+
+Avant le build, un script transforme l’export JSON de la base en fichier utilisable par le frontend :
+
+npm run build
+
+
+Cela lance :
+
+build:data → Génération de public/data/modules.json
+
+Compilation TypeScript
+
+Build Vite
+
+🚀 Déploiement GitHub Pages
+npm run deploy
+
+
+Le site est publié automatiquement sur la branche gh-pages.
+
+🧩 Fonctionnalités principales
+
+📚 Modules structurés (10 modules actuellement)
+
+🧠 3 exercices par module
+
+🔓 Système de déblocage progressif
+
+📊 Barre de progression globale et par module
+
+🎨 Thème dynamique (palette personnalisable)
+
+👶 Textes pédagogiques accessibles
+
+🖱️ Effet “scratch” pour révéler les solutions
+
+👁️ Prévisualisation sandboxée du code généré
+
+📁 Structure simplifiée
+src/
+ ├── api/
+ │    └── modules.ts
+ ├── components/
+ ├── pages/
+ │    └── ModulesPage.tsx
+ ├── progress/
+ ├── styles/
+public/
+ └── data/
+      └── modules.json
+scripts/
+ └── build-modules-json.mjs
+
+📚 Modules actuels
+
+HTML de base
+
+CSS simple
+
+Interaction JavaScript
+
+Images & accessibilité
+
+Liens hypertexte
+
+Listes
+
+Formulaires
+
+Flexbox
+
+CSS Grid
+
+Fetch API (premier pas)
+
+🧠 Philosophie pédagogique
+
+Comprendre avant de mémoriser
+
+Manipuler pour apprendre
+
+Voir immédiatement le résultat
+
+Progression claire et motivante
+
+🔮 Améliorations futures possibles
+
+Système de comptes utilisateurs
+
+Sauvegarde cloud de la progression
+
+Niveaux Blockly complets
+
+Mode “challenge chronométré”
+
+Ajout d’exercices avancés
+
+Backend API distant
+
+👤 Auteur
+
+Projet développé par IceliosPY
+
+Si tu veux, je peux aussi te faire une version :
+
+plus minimaliste
+
+plus “portfolio professionnel”
+
+ou plus orientée pédagogie / éducation
+
+Tu me dis le style que tu veux 😌
