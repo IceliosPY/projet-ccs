@@ -1,0 +1,301 @@
+// src/pages/LessonsPage.tsx
+import { useEffect, useMemo, useRef, useState } from "react";
+import { fetchLessons, type Lesson } from "../api/lessons";
+import { PuzzleBoard } from "../components/PuzzleBoard";
+import { SandboxedPreview } from "../components/SandboxedPreview";
+import { getMaxUnlocked, setMaxUnlocked } from "../progress/progress";
+import { LessonExplanation } from "../components/LessonExplanation";
+
+export function LessonsPage() {
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [current, setCurrent] = useState(0);
+
+  // Leçon courante validée (ou déjà débloquée)
+  const [solved, setSolved] = useState(false);
+
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  // Progression: index max débloqué (0 = leçon 1)
+  const [maxUnlocked, setMaxUnlockedState] = useState<number>(() => getMaxUnlocked());
+
+  // Drawer menu
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  const lesson = lessons[current];
+
+  // Load lessons
+  useEffect(() => {
+    (async () => {
+      try {
+        setStatus("loading");
+        const data = await fetchLessons();
+        setLessons(data);
+
+        const mu = getMaxUnlocked();
+        setMaxUnlockedState(mu);
+
+        // arriver sur la dernière leçon débloquée (si existante)
+        setCurrent(Math.min(mu, Math.max(0, data.length - 1)));
+
+        setStatus("ready");
+      } catch (e) {
+        console.error(e);
+        setStatus("error");
+      }
+    })();
+  }, []);
+
+  // Une leçon déjà débloquée est considérée comme validée
+  useEffect(() => {
+    setSolved(current < maxUnlocked);
+  }, [current, maxUnlocked]);
+
+  // ESC ferme le menu
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        menuBtnRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
+  const explanationText = useMemo(() => {
+    if (!lesson) return "";
+    const tmp = document.createElement("div");
+    tmp.innerHTML = lesson.fullExplanation;
+    return tmp.textContent || "";
+  }, [lesson?.title, lesson?.fullExplanation]);
+
+  const progressNow = Math.min(maxUnlocked + 1, lessons.length);
+  const progressMax = Math.max(1, lessons.length);
+  const progressPct = `${(progressNow / progressMax) * 100}%`;
+
+  function unlockNextIfNeeded() {
+    const next = current + 1;
+    if (next > maxUnlocked) {
+      setMaxUnlockedState(next);
+      setMaxUnlocked(next);
+    }
+  }
+
+  function onSelectLesson(idx: number) {
+    setCurrent(idx);
+    setMenuOpen(false);
+    requestAnimationFrame(() => menuBtnRef.current?.focus());
+  }
+
+  if (status === "loading") return <div style={{ padding: 20 }}>Chargement…</div>;
+  if (status === "error") {
+    return (
+      <div style={{ padding: 20 }}>
+        <h2>Erreur</h2>
+        <p>Impossible de charger les leçons.</p>
+      </div>
+    );
+  }
+  if (!lesson) return <div style={{ padding: 20 }}>Aucune leçon.</div>;
+
+  return (
+    <div className="page">
+      {/* Overlay */}
+      {menuOpen && (
+        <div
+          className="drawer-overlay"
+          onClick={() => {
+            setMenuOpen(false);
+            menuBtnRef.current?.focus();
+          }}
+        />
+      )}
+
+      {/* Drawer */}
+      <aside className={`drawer ${menuOpen ? "open" : ""}`} aria-hidden={!menuOpen}>
+        <div className="drawer-header">
+          <div style={{ width: "100%" }}>
+            <div style={{ fontWeight: 900 }}>Leçons</div>
+
+            {/* ✅ barre de progression dans le drawer */}
+            <div style={{ marginTop: 8 }}>
+              <div
+                className="progress-bar"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={lessons.length}
+                aria-valuenow={progressNow}
+              >
+                <div className="progress-fill" style={{ ["--p" as any]: progressPct }} />
+              </div>
+
+              <div className="progress-row" style={{ marginTop: 6 }}>
+                <div className="progress-label">Progression</div>
+                <div className="progress-value">
+                  {progressNow} / {lessons.length}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(false);
+              menuBtnRef.current?.focus();
+            }}
+            aria-label="Fermer le menu"
+            title="Fermer"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="drawer-list">
+          {lessons.map((l, idx) => {
+            const isUnlocked = idx <= maxUnlocked;
+            const isActive = idx === current;
+
+            return (
+              <button
+                key={`${idx}-${l.title}`}
+                className={`lesson-item ${isActive ? "active" : ""}`}
+                onClick={() => isUnlocked && onSelectLesson(idx)}
+                disabled={!isUnlocked}
+                title={isUnlocked ? "" : "Termine les leçons précédentes pour débloquer"}
+                type="button"
+              >
+                <div style={{ fontSize: 12, opacity: 0.7 }}>
+                  Leçon {idx + 1} {isUnlocked ? "" : "🔒"}
+                </div>
+                <div style={{ fontWeight: 800 }}>{l.title}</div>
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => {
+              setMaxUnlockedState(0);
+              setMaxUnlocked(0);
+              setCurrent(0);
+              setSolved(false);
+              setMenuOpen(false);
+              requestAnimationFrame(() => menuBtnRef.current?.focus());
+            }}
+            style={{ width: "100%", marginTop: 6 }}
+          >
+            Réinitialiser progression
+          </button>
+        </div>
+      </aside>
+
+      {/* Scrollable main area */}
+      <div className="page-scroll">
+        {/* Sticky sub-header */}
+        <div className="sticky-subheader">
+          <div className="container" style={{ padding: "14px 20px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "center", minWidth: 0 }}>
+                <button
+                  ref={menuBtnRef}
+                  type="button"
+                  onClick={() => setMenuOpen(true)}
+                  aria-label="Ouvrir le menu des leçons"
+                  title="Menu"
+                  style={{ borderRadius: 14, padding: "10px 12px" }}
+                >
+                  ☰
+                </button>
+
+                <div style={{ minWidth: 0 }}>
+                  {/* ✅ barre de progression (palette-aware) */}
+                  <div
+                    className="progress-wrap"
+                    aria-label={`Progression ${progressNow} sur ${lessons.length}`}
+                    style={{ marginBottom: 6, maxWidth: 320 }}
+                  >
+                    <div className="progress-row">
+                      <div className="progress-label">Progression</div>
+                      <div className="progress-value">
+                        {progressNow} / {lessons.length}
+                      </div>
+                    </div>
+
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={lessons.length}
+                      aria-valuenow={progressNow}
+                    >
+                      <div className="progress-fill" style={{ ["--p" as any]: progressPct }} />
+                    </div>
+                  </div>
+
+                  <h2 style={{ margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {lesson.title}
+                  </h2>
+
+                  <div style={{ opacity: 0.7, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {explanationText.slice(0, 90)}…
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 10 }}>
+                <button onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0} type="button">
+                  ← Précédent
+                </button>
+
+                <button
+                  onClick={() => {
+                    unlockNextIfNeeded();
+                    setCurrent((c) => Math.min(lessons.length - 1, c + 1));
+                  }}
+                  disabled={current === lessons.length - 1 || !solved}
+                  title={!solved ? "Valide la leçon pour continuer" : ""}
+                  type="button"
+                >
+                  Suivant →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="container" style={{ padding: "18px 20px 40px" }}>
+          {/* Explication avec blocs solution "grattables" */}
+          <section className="card">
+            <LessonExplanation html={lesson.fullExplanation} />
+          </section>
+
+          <section style={{ marginTop: 16 }}>
+            <h3 style={{ marginBottom: 8 }}>Exercice (Puzzle)</h3>
+
+            <div className="card accent" style={{ background: "rgba(255,255,255,0.92)" }}>
+              <PuzzleBoard
+                lesson={lesson}
+                onSolved={() => {
+                  setSolved(true);
+                  unlockNextIfNeeded();
+                }}
+              />
+            </div>
+          </section>
+
+          <section style={{ marginTop: 16 }}>
+            <h3 style={{ marginBottom: 8 }}>Prévisualisation</h3>
+
+            <div className="card" style={{ background: "rgba(255,255,255,0.92)" }}>
+              <SandboxedPreview html={solved ? lesson.orderedCode : ""} />
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}

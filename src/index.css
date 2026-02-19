@@ -1,0 +1,535 @@
+/* src/index.css
+   CCS – thème modulable + UI “app pro” + accessibilité
+*/
+
+/* ---------------------------
+   0) Base & variables
+---------------------------- */
+:root{
+  color-scheme: light;
+
+  /* Thème (valeurs par défaut – remplacées par applyTheme()) */
+  --bg: #f7f7fb;
+  --card: rgba(255,255,255,0.90);
+  --text: rgb(20 20 22);
+  --muted: rgb(105 105 115);
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 12px 32px rgba(0,0,0,0.10);
+
+  --accent: #5BCEFA;
+  --accent2: #F5A9B8;
+  --flag-grad: linear-gradient(135deg, #5BCEFA, #F5A9B8, #ffffff);
+
+  /* Layout */
+  --topbar-h: 64px;
+  --radius: 16px;
+  --radius-sm: 12px;
+}
+
+*{ box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body{
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    "Apple Color Emoji","Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Fond "flag" très discret (esthétique, pas envahissant) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background: var(--flag-grad);
+  opacity: 0.40;
+  pointer-events: none;
+  z-index: -2;
+}
+
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 55%),
+    radial-gradient(circle at 82% 22%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 60%),
+    radial-gradient(circle at 50% 92%, rgba(255,255,255,0.55), transparent 55%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+a{ color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+code, pre, textarea{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.muted{ color: var(--muted); }
+
+/* ---------------------------
+   1) Buttons & inputs
+---------------------------- */
+button{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.86);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+button:hover:not(:disabled){
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent) 8%, white);
+  box-shadow: var(--shadow);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+}
+
+button:active:not(:disabled){
+  transform: translateY(0px);
+}
+
+button:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button:focus-visible{
+  outline: 3px solid color-mix(in srgb, var(--accent) 60%, white);
+  outline-offset: 2px;
+}
+
+select{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.86);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+select:focus-visible{
+  outline: 3px solid color-mix(in srgb, var(--accent) 60%, white);
+  outline-offset: 2px;
+}
+
+/* Boutons “primaire” (si tu veux les utiliser) */
+.btn-primary{
+  background: color-mix(in srgb, var(--accent) 18%, white);
+  border-color: color-mix(in srgb, var(--accent) 45%, white);
+}
+
+.btn-primary:hover:not(:disabled){
+  background: color-mix(in srgb, var(--accent) 26%, white);
+}
+
+/* ---------------------------
+   2) Containers & cards
+---------------------------- */
+.container{
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.card{
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.07);
+}
+
+/* Petit liseré décoratif optionnel */
+.card.accent{
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  box-shadow: 0 10px 26px rgba(0,0,0,0.07), 0 0 0 1px rgba(255,255,255,0.35) inset;
+}
+
+/* ---------------------------
+   3) Lessons layout (sticky header)
+---------------------------- */
+.page{
+  height: calc(100vh - var(--topbar-h));
+  overflow: hidden;
+}
+
+.page-scroll{
+  height: 100%;
+  overflow: auto;
+}
+
+.sticky-subheader{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.sticky-subheader .container{
+  padding: 14px 20px;
+}
+
+/* ---------------------------
+   4) Drawer (menu repliable)
+---------------------------- */
+.drawer-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.40);
+  z-index: 40;
+}
+
+.drawer{
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(360px, 88vw);
+  background: rgba(255,255,255,0.96);
+  border-right: 1px solid var(--border);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.20);
+  transform: translateX(-105%);
+  transition: transform 220ms ease;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open{
+  transform: translateX(0);
+}
+
+.drawer-header{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 14px 14px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-list{
+  padding: 12px;
+  overflow: auto;
+}
+
+.lesson-item{
+  width: 100%;
+  text-align: left;
+  padding: 12px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.86);
+  margin-bottom: 10px;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.lesson-item:hover:not(:disabled){
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.96);
+}
+
+.lesson-item.active{
+  background: color-mix(in srgb, var(--accent) 16%, white);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.lesson-item:disabled{
+  opacity: 0.50;
+  box-shadow: none;
+}
+
+/* ---------------------------
+   5) Puzzle tiles (FLIP + keyboard)
+---------------------------- */
+.puzzle-tile{
+  transition: transform 220ms ease, box-shadow 220ms ease, opacity 220ms ease, border-color 220ms ease;
+  will-change: transform;
+  outline: none;
+}
+
+.puzzle-tile.dragging{
+  opacity: 0.65;
+  cursor: grabbing;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.18);
+}
+
+.puzzle-tile.drop-target{
+  outline: 3px solid color-mix(in srgb, var(--accent) 55%, white);
+  outline-offset: 2px;
+}
+
+.puzzle-tile.selected{
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 75%, white);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 6%, white);
+}
+
+.puzzle-tile:focus-visible{
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent2) 55%, white);
+}
+
+.puzzle-controls{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+/* ---------------------------
+   6) Small responsive tweaks
+---------------------------- */
+@media (max-width: 520px){
+  .sticky-subheader .container{
+    padding: 12px 12px;
+  }
+  button{
+    padding: 9px 10px;
+    border-radius: 12px;
+  }
+  .card{
+    padding: 14px;
+  }
+}
+
+/* =========================================================
+   7) Scratch effect (tiles in puzzle) — simple
+========================================================= */
+.tile-content{
+  position: relative;
+}
+
+.tile-hidden{
+  filter: blur(8px);
+  opacity: 0.9;
+  user-select: none;
+}
+
+.scratch-layer{
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.70);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  pointer-events: none; /* le canvas gère */
+}
+
+.scratch-hint{
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.65);
+}
+
+.scratch-canvas{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   8) Scratch solution block (lesson explanation) — PREMIUM
+========================================================= */
+.scratch-solution{
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(0,0,0,0.08);
+  overflow: hidden;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+}
+
+/* liseré accent en haut */
+.scratch-solution::before{
+  content:"";
+  position:absolute;
+  left: 0; right: 0; top: 0;
+  height: 4px;
+  opacity: 0.85;
+  z-index: 1;
+}
+
+.scratch-solution pre{
+  margin: 0;
+  padding: 16px 18px;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.scratch-solution code{
+  white-space: pre;
+}
+
+/* overlay façon carte à gratter */
+.scratch-solution .scratch-layer{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    radial-gradient(120% 80% at 20% 10%, rgba(255,255,255,0.78), rgba(255,255,255,0) 55%),
+    radial-gradient(120% 80% at 90% 30%, rgba(0,0,0,0.06), rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, rgba(240,240,240,0.88), rgba(228,228,228,0.86));
+
+  backdrop-filter: blur(10px);
+}
+
+/* micro-points + stries */
+.scratch-solution .scratch-layer::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity: 0.55;
+  background:
+    radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1.2px) 0 0 / 14px 14px,
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 1px, transparent 1px, transparent 10px);
+}
+
+/* glow accent */
+.scratch-solution .scratch-layer::after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 15% 25%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    radial-gradient(circle at 85% 35%, color-mix(in srgb, var(--accent2) 12%, transparent), transparent 60%);
+  opacity: 0.9;
+}
+
+/* hint premium */
+.scratch-solution .scratch-hint{
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  z-index: 3;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.62);
+
+  padding: 8px 10px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.78);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+}
+
+.scratch-solution .scratch-hint::before{
+  content:"🪙";
+  font-size: 14px;
+}
+
+.scratch-solution .scratch-canvas{
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.scratch-solution .scratch-canvas:active{
+  filter: brightness(0.98);
+}
+
+.scratch-solution .scratch-actions{
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,0.86);
+  position: relative;
+  z-index: 5;
+}
+
+/* ===== Progress bar (theme-aware) ===== */
+.progress-wrap{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.progress-row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.progress-label{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.progress-value{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.progress-bar{
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.08);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.10) inset;
+}
+
+.progress-fill{
+  height: 100%;
+  width: var(--p, 0%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 10px 18px rgba(0,0,0,0.14);
+  transition: width 240ms ease;
+}
+
+/* petit "sparkle" discret au bout */
+.progress-fill::after{
+  content:"";
+  display:block;
+  height:100%;
+  width: 40px;
+  margin-left: auto;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  opacity: 0.35;
+}
+.card.accent .scratch-solution {
+  border-color: var(--border) !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.07) !important;
+}
+
+/* Remove focus accent glow */
+.scratch-solution:focus-within {
+  box-shadow: 0 10px 26px rgba(0,0,0,0.07) !important;
+}
