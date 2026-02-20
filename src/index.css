@@ -1,5 +1,5 @@
 /* src/index.css
-   CCS – thème modulable + UI “app pro” + accessibilité
+   CCS
 */
 
 /* ---------------------------
@@ -8,7 +8,6 @@
 :root{
   color-scheme: light;
 
-  /* Thème (valeurs par défaut – remplacées par applyTheme()) */
   --bg: #f7f7fb;
   --card: rgba(255,255,255,0.90);
   --text: rgb(20 20 22);
@@ -120,7 +119,6 @@ select:focus-visible{
   outline-offset: 2px;
 }
 
-/* Boutons “primaire” (si tu veux les utiliser) */
 .btn-primary{
   background: color-mix(in srgb, var(--accent) 18%, white);
   border-color: color-mix(in srgb, var(--accent) 45%, white);
@@ -146,7 +144,6 @@ select:focus-visible{
   box-shadow: 0 10px 26px rgba(0,0,0,0.07);
 }
 
-/* Petit liseré décoratif optionnel */
 .card.accent{
   border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
   box-shadow: 0 10px 26px rgba(0,0,0,0.07), 0 0 0 1px rgba(255,255,255,0.35) inset;
@@ -396,7 +393,6 @@ select:focus-visible{
   backdrop-filter: blur(10px);
 }
 
-/* micro-points + stries */
 .scratch-solution .scratch-layer::before{
   content:"";
   position:absolute;
@@ -407,7 +403,6 @@ select:focus-visible{
     repeating-linear-gradient(0deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 1px, transparent 1px, transparent 10px);
 }
 
-/* glow accent */
 .scratch-solution .scratch-layer::after{
   content:"";
   position:absolute;
@@ -418,7 +413,6 @@ select:focus-visible{
   opacity: 0.9;
 }
 
-/* hint premium */
 .scratch-solution .scratch-hint{
   position: absolute;
   left: 14px;
@@ -469,7 +463,6 @@ select:focus-visible{
   z-index: 5;
 }
 
-/* ===== Progress bar (theme-aware) ===== */
 .progress-wrap{
   display: flex;
   flex-direction: column;
@@ -514,7 +507,6 @@ select:focus-visible{
   transition: width 240ms ease;
 }
 
-/* petit "sparkle" discret au bout */
 .progress-fill::after{
   content:"";
   display:block;
