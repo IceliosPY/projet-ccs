@@ -39,7 +39,6 @@ body{
   color: var(--text);
 }
 
-/* Fond "flag" très discret (esthétique, pas envahissant) */
 body::before{
   content:"";
   position: fixed;
@@ -378,7 +377,6 @@ select:focus-visible{
   white-space: pre;
 }
 
-/* overlay façon carte à gratter */
 .scratch-solution .scratch-layer{
   position: absolute;
   inset: 0;
@@ -521,7 +519,6 @@ select:focus-visible{
   box-shadow: 0 10px 26px rgba(0,0,0,0.07) !important;
 }
 
-/* Remove focus accent glow */
 .scratch-solution:focus-within {
   box-shadow: 0 10px 26px rgba(0,0,0,0.07) !important;
 }
