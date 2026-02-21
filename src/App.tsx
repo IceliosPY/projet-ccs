@@ -67,12 +67,10 @@ export default function App() {
             Blockly
           </button>
 
-          {/* 🎨 Bouton Palette */}
           <ThemeMenu />
         </nav>
       </header>
 
-      {/* ===== Page content ===== */}
       <div style={{ flex: 1, minHeight: 0 }}>
         {tab === "modules" ? <ModulesPage /> : <BlocklyPage />}
       </div>
